@@ -172,6 +172,7 @@ def download_security_sector_by_date_wind(t_download_date: str, t_save_root_dir:
         sector_df = None
 
         if t_sector_class in ["zjw"]:
+            # w.wss("000001.SZ,300001.SZ,600000.SH", "industry_CSRCcode12, industry_csrc12_n","tradeDate=20220519;industryType=3")
             downloaded_data = w.wss(
                 t_sec_id_list,
                 "{},{}".format(sector_sub_class_mgr[t_sector_class]["code"], sector_sub_class_mgr[t_sector_class]["name"]),
@@ -204,12 +205,12 @@ def download_security_sector_by_date_wind(t_download_date: str, t_save_root_dir:
                     },
                 )
 
+                # use name_to_code_mapper and name to update industry_code
                 name_to_code_df = pd.read_excel("industry_info.xlsx", sheet_name=t_sector_class, dtype=str)
                 name_to_code_df["industry_code"] = name_to_code_df["index"].map(lambda z: z.replace(".SI", ""))
                 name_to_code_df["industry_name"] = name_to_code_df["name"].map(lambda z: z.replace("(申万)", ""))
                 name_to_code_df = name_to_code_df.set_index("industry_name")
                 name_to_code_mapper = name_to_code_df["industry_code"].to_dict()
-
                 sector_df["industry_code"] = sector_df["industry_name"].map(lambda z: name_to_code_mapper.get(z, ""))
 
             else:
